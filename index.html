@@ -6,10 +6,12 @@
     <title>Locker Selection</title>
     <script>
         function selectLocker(lockerID) {
-            // Force the full browser window to redirect to Jotform
+            // Check if we're inside an iframe (Jotform Embed)
             if (window.top !== window.self) {
+                // Redirect the FULL parent window (breaks out of iframe)
                 window.top.location.href = `https://form.jotform.com/250346205562047?locker=${lockerID}`;
             } else {
+                // Normal redirect if not in an iframe
                 window.location.href = `https://form.jotform.com/250346205562047?locker=${lockerID}`;
             }
         }
@@ -20,10 +22,11 @@
     <img src="Casier.png" usemap="#image-map">
 
     <map name="image-map">
-        <!-- Ensure each <area> element has an onclick and a valid href -->
-        <area alt="R-15" title="R-15" href="javascript:void(0);" onclick="selectLocker('R-15');" coords="231,309,285,325" shape="rect">
-        <area alt="R-14" title="R-14" href="javascript:void(0);" onclick="selectLocker('R-14');" coords="290,310,345,325" shape="rect">
+        <!-- Ensure each area tag has a working onclick event -->
+        <area shape="rect" coords="231,309,285,325" alt="R-15" title="R-15" href="#" onclick="selectLocker('R-15'); return false;">
+        <area shape="rect" coords="290,310,345,325" alt="R-14" title="R-14" href="#" onclick="selectLocker('R-14'); return false;">
     </map>
 </body>
 </html>
+
 
