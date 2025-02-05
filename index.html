@@ -8,11 +8,11 @@
         function selectLocker(lockerID) {
             let jotformURL = "https://form.jotform.com/250346205562047?selected_locker=" + lockerID;
 
-            // If inside an iframe (Jotform embed), force the parent window to reload
+            // Force Jotform to fully replace the page, even if inside an iFrame
             if (window.top !== window.self) {
-                window.top.location.href = jotformURL;  // Breaks out of iframe
+                window.top.location.replace(jotformURL);  // Breaks out of iFrame
             } else {
-                window.location.href = jotformURL;  // Normal redirect
+                window.location.replace(jotformURL);  // Normal redirect
             }
         }
     </script>
