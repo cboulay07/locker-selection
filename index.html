@@ -8,7 +8,7 @@
         /* Style for disabled lockers (gray out effect) */
         .disabled {
             pointer-events: none; /* Prevent clicking */
-            opacity: 0.5; /* Gray out */
+            opacity: 0.4; /* Make it visually grayed out */
         }
     </style>
     <script>
@@ -23,6 +23,7 @@
                     if (lockers[lockerID] === "unavailable") {
                         area.classList.add("disabled"); // Apply gray-out style
                         area.removeAttribute("onclick"); // Disable click function
+                        area.removeAttribute("href"); // Prevent any accidental navigation
                     }
                 });
             } catch (error) {
@@ -41,12 +42,13 @@
             }
         }
 
-        window.onload = fetchLockerAvailability; // Fetch locker availability when page loads
+        // Ensure locker availability is checked when the page loads
+        window.onload = fetchLockerAvailability;
     </script>
 </head>
 <body>
     <h2>Select an Available Locker</h2>
-    <img src="Casier.png" usemap="#image-map">
+    <img id="lockerMap" src="Casier.png" usemap="#image-map">
 
     <map name="image-map">
         <area shape="rect" coords="231,309,285,325" alt="R-15" title="R-15" href="#" onclick="selectLocker('R-15'); return false;">
@@ -55,3 +57,4 @@
     </map>
 </body>
 </html>
+
