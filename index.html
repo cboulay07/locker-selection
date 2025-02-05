@@ -8,12 +8,8 @@
         function selectLocker(lockerID) {
             let jotformURL = "https://form.jotform.com/250346205562047?selected_locker=" + lockerID;
 
-            // If embedded in an iframe, break out and redirect full page
-            if (window.top !== window.self) {
-                window.top.location.href = jotformURL;
-            } else {
-                window.location.href = jotformURL;
-            }
+            // Force the entire page (not just iframe) to open Jotform
+            window.open(jotformURL, "_top");
         }
     </script>
 </head>
