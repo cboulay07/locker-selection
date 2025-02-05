@@ -5,20 +5,29 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Locker Selection</title>
     <style>
-        /* Style for adding text labels */
+        /* Style for locker map container */
         .locker-container {
             position: relative;
             display: inline-block;
         }
+        
+        /* Style for unavailable lockers (red overlay) */
+        .locker-overlay {
+            position: absolute;
+            background: rgba(255, 0, 0, 0.5); /* Semi-transparent red */
+            pointer-events: none; /* Prevent clicking */
+        }
+
+        /* Style for "VENDU" label */
         .locker-text {
             position: absolute;
-            font-size: 14px;
+            font-size: 16px;
             font-weight: bold;
-            color: red;
-            text-shadow: 1px 1px 2px white;
-            background: rgba(255, 255, 255, 0.7);
+            color: white;
+            background: rgba(255, 0, 0, 0.8);
             padding: 2px 4px;
             border-radius: 4px;
+            text-align: center;
         }
     </style>
     <script>
@@ -27,46 +36,41 @@
                 let response = await fetch("https://cboulay07.github.io/locker-selection/lockers.json");
                 let lockers = await response.json();
 
-                let img = document.getElementById("lockerMap");
-                let ctx = document.createElement("canvas").getContext("2d");
-                let imgObj = new Image();
-                imgObj.src = img.src;
+                document.querySelectorAll("area").forEach(area => {
+                    let lockerID = area.getAttribute("alt");
 
-                imgObj.onload = function() {
-                    let canvas = document.createElement("canvas");
-                    canvas.width = img.width;
-                    canvas.height = img.height;
-                    let ctx = canvas.getContext("2d");
-                    ctx.drawImage(imgObj, 0, 0);
+                    if (lockers[lockerID] === "unavailable") {
+                        area.removeAttribute("onclick"); // Disable click event
+                        area.removeAttribute("href"); // Prevent accidental navigation
 
-                    document.querySelectorAll("area").forEach(area => {
-                        let lockerID = area.getAttribute("alt");
+                        // Get coordinates from image map
+                        let coords = area.getAttribute("coords").split(",");
+                        let x = parseInt(coords[0]);
+                        let y = parseInt(coords[1]);
+                        let width = parseInt(coords[2]) - x;
+                        let height = parseInt(coords[3]) - y;
 
-                        if (lockers[lockerID] === "unavailable") {
-                            area.removeAttribute("onclick"); // Disable click event
-                            area.removeAttribute("href"); // Prevent accidental navigation
+                        // Create red overlay div
+                        let overlay = document.createElement("div");
+                        overlay.className = "locker-overlay";
+                        overlay.style.left = `${x}px`;
+                        overlay.style.top = `${y}px`;
+                        overlay.style.width = `${width}px`;
+                        overlay.style.height = `${height}px`;
+                        overlay.style.position = "absolute";
 
-                            // Get coordinates from image map
-                            let coords = area.getAttribute("coords").split(",");
-                            let x = parseInt(coords[0]);
-                            let y = parseInt(coords[1]);
-                            let width = parseInt(coords[2]) - x;
-                            let height = parseInt(coords[3]) - y;
+                        // Create "VENDU" label
+                        let label = document.createElement("div");
+                        label.className = "locker-text";
+                        label.innerText = "VENDU";
+                        label.style.left = `${x + width / 4}px`;
+                        label.style.top = `${y + height / 3}px`;
+                        label.style.position = "absolute";
 
-                            // Apply a semi-transparent red overlay
-                            ctx.fillStyle = "rgba(255, 0, 0, 0.4)";
-                            ctx.fillRect(x, y, width, height);
-
-                            // Add "VENDU" text
-                            ctx.fillStyle = "red";
-                            ctx.font = "bold 16px Arial";
-                            ctx.textAlign = "center";
-                            ctx.fillText("VENDU", x + width / 2, y + height / 2);
-                        }
-                    });
-
-                    img.src = canvas.toDataURL();
-                };
+                        document.getElementById("locker-container").appendChild(overlay);
+                        document.getElementById("locker-container").appendChild(label);
+                    }
+                });
             } catch (error) {
                 console.error("Error fetching locker data:", error);
             }
@@ -89,7 +93,7 @@
 </head>
 <body>
     <h2>Select an Available Locker</h2>
-    <div class="locker-container">
+    <div id="locker-container" class="locker-container">
         <img id="lockerMap" src="Casier.png" usemap="#image-map">
     </div>
 
