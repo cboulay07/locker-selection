@@ -6,10 +6,8 @@
     <title>Locker Selection</title>
     <script>
         function selectLocker(lockerID) {
-            let jotformURL = "https://form.jotform.com/250346205562047?selected_locker=" + lockerID;
-
-            // Open Jotform in a completely new full page
-            window.location.assign(jotformURL);
+            // Force opening Jotform in a full new page
+            window.open(`https://form.jotform.com/250346205562047?locker=${lockerID}`, "_self");
         }
     </script>
 </head>
