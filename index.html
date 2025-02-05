@@ -5,27 +5,60 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Locker Selection</title>
     <style>
-        /* Style for disabled lockers (gray out effect) */
+        /* Style for graying out unavailable lockers */
         .disabled {
-            pointer-events: none; /* Prevent clicking */
-            opacity: 0.4; /* Make it visually grayed out */
+            filter: grayscale(100%) brightness(70%);
+            pointer-events: none; /* Completely disable clicking */
         }
     </style>
     <script>
         async function fetchLockerAvailability() {
             try {
-                let response = await fetch("https://cboulay07.github.io/locker-selection/lockers.json");
+                let response = await fetch("https://yourusername.github.io/locker-selection/lockers.json");
                 let lockers = await response.json();
 
                 document.querySelectorAll("area").forEach(area => {
                     let lockerID = area.getAttribute("alt");
 
                     if (lockers[lockerID] === "unavailable") {
-                        area.classList.add("disabled"); // Apply gray-out style
-                        area.removeAttribute("onclick"); // Disable click function
-                        area.removeAttribute("href"); // Prevent any accidental navigation
+                        area.removeAttribute("onclick");  // Disable click event
+                        area.removeAttribute("href");  // Prevent accidental navigation
                     }
                 });
+
+                // Apply gray-out effect to the image itself for unavailable lockers
+                let img = document.getElementById("lockerMap");
+                let ctx = document.createElement("canvas").getContext("2d");
+                let imgObj = new Image();
+                imgObj.src = img.src;
+                
+                imgObj.onload = function() {
+                    let canvas = document.createElement("canvas");
+                    canvas.width = img.width;
+                    canvas.height = img.height;
+                    let ctx = canvas.getContext("2d");
+                    ctx.drawImage(imgObj, 0, 0);
+
+                    // Loop through unavailable lockers and apply gray effect
+                    Object.keys(lockers).forEach(lockerID => {
+                        if (lockers[lockerID] === "unavailable") {
+                            let lockerArea = document.querySelector(`area[alt="${lockerID}"]`);
+                            if (lockerArea) {
+                                let coords = lockerArea.getAttribute("coords").split(",");
+                                let x = parseInt(coords[0]);
+                                let y = parseInt(coords[1]);
+                                let width = parseInt(coords[2]) - x;
+                                let height = parseInt(coords[3]) - y;
+
+                                // Apply a semi-transparent gray overlay
+                                ctx.fillStyle = "rgba(0, 0, 0, 0.5)";
+                                ctx.fillRect(x, y, width, height);
+                            }
+                        }
+                    });
+
+                    img.src = canvas.toDataURL();
+                };
             } catch (error) {
                 console.error("Error fetching locker data:", error);
             }
@@ -34,7 +67,7 @@
         function selectLocker(lockerID) {
             let jotformURL = "https://form.jotform.com/250346205562047?selected_locker=" + lockerID;
 
-            // If inside an iframe, break out and redirect full page
+            // Ensure the full page refreshes, breaking out of Jotform iframe
             if (window.top !== window.self) {
                 window.top.location.replace(jotformURL);
             } else {
@@ -42,7 +75,7 @@
             }
         }
 
-        // Ensure locker availability is checked when the page loads
+        // Load locker availability when the page is ready
         window.onload = fetchLockerAvailability;
     </script>
 </head>
