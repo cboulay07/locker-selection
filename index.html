@@ -8,8 +8,8 @@
         function selectLocker(lockerID) {
             let jotformURL = "https://form.jotform.com/250346205562047?selected_locker=" + lockerID;
 
-            // Force the entire page (not just iframe) to open Jotform
-            window.open(jotformURL, "_top");
+            // Open Jotform in a completely new full page
+            window.location.assign(jotformURL);
         }
     </script>
 </head>
