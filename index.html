@@ -6,13 +6,11 @@
     <title>Locker Selection</title>
     <script>
         function selectLocker(lockerID) {
-            // Check if we're inside an iframe (Jotform Embed)
+            // Ensure the full window (not the iframe) redirects to Jotform
             if (window.top !== window.self) {
-                // Redirect the FULL parent window (breaks out of iframe)
-                window.top.location.href = `https://form.jotform.com/250346205562047?locker=${lockerID}`;
+                window.top.location.replace(`https://form.jotform.com/250346205562047?locker=${lockerID}`);
             } else {
-                // Normal redirect if not in an iframe
-                window.location.href = `https://form.jotform.com/250346205562047?locker=${lockerID}`;
+                window.location.replace(`https://form.jotform.com/250346205562047?locker=${lockerID}`);
             }
         }
     </script>
@@ -28,5 +26,6 @@
     </map>
 </body>
 </html>
+
 
 
