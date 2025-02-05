@@ -4,17 +4,44 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Locker Selection</title>
+    <style>
+        /* Style for disabled lockers (gray out effect) */
+        .disabled {
+            pointer-events: none; /* Prevent clicking */
+            opacity: 0.5; /* Gray out */
+        }
+    </style>
     <script>
+        async function fetchLockerAvailability() {
+            try {
+                let response = await fetch("https://yourusername.github.io/locker-selection/lockers.json");
+                let lockers = await response.json();
+
+                document.querySelectorAll("area").forEach(area => {
+                    let lockerID = area.getAttribute("alt");
+
+                    if (lockers[lockerID] === "unavailable") {
+                        area.classList.add("disabled"); // Apply gray-out style
+                        area.removeAttribute("onclick"); // Disable click function
+                    }
+                });
+            } catch (error) {
+                console.error("Error fetching locker data:", error);
+            }
+        }
+
         function selectLocker(lockerID) {
             let jotformURL = "https://form.jotform.com/250346205562047?selected_locker=" + lockerID;
 
-            // Force Jotform to fully replace the page, even if inside an iFrame
+            // If inside an iframe, break out and redirect full page
             if (window.top !== window.self) {
-                window.top.location.replace(jotformURL);  // Breaks out of iFrame
+                window.top.location.replace(jotformURL);
             } else {
-                window.location.replace(jotformURL);  // Normal redirect
+                window.location.replace(jotformURL);
             }
         }
+
+        window.onload = fetchLockerAvailability; // Fetch locker availability when page loads
     </script>
 </head>
 <body>
@@ -24,6 +51,7 @@
     <map name="image-map">
         <area shape="rect" coords="231,309,285,325" alt="R-15" title="R-15" href="#" onclick="selectLocker('R-15'); return false;">
         <area shape="rect" coords="290,310,345,325" alt="R-14" title="R-14" href="#" onclick="selectLocker('R-14'); return false;">
+        <area shape="rect" coords="350,310,405,325" alt="R-13" title="R-13" href="#" onclick="selectLocker('R-13'); return false;">
     </map>
 </body>
 </html>
