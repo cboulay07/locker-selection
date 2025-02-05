@@ -14,7 +14,7 @@
     <script>
         async function fetchLockerAvailability() {
             try {
-                let response = await fetch("https://yourusername.github.io/locker-selection/lockers.json");
+                let response = await fetch("https://cboulay07.github.io/locker-selection/lockers.json");
                 let lockers = await response.json();
 
                 document.querySelectorAll("area").forEach(area => {
